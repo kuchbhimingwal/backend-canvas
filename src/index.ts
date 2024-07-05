@@ -26,6 +26,7 @@ wss.on('connection', function connection(ws) {
       if (ws !== senderSocket) {
         return;
       }
+      
       receiverSocket?.send(JSON.stringify({ type: 'createLine', sdp: message.sdp }));
     }
   });

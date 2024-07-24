@@ -1,3 +1,4 @@
+import { WebSocket } from "ws";
 export class GameManager {
   private games: Game[];
   private pendingUsers: WebSocket[];
@@ -15,7 +16,7 @@ export class GameManager {
   }
 
   private handlUser(socket: WebSocket){
-    socket.on("message" ,(data)=>{
+    socket.on("message" , (data)=>{
       const message = JSON.parse(data.toString());
 
       if(message.type == "INIT_GAME"){
@@ -27,8 +28,14 @@ export class GameManager {
           this.pendingUsers.push(socket)
         }
       }
-      if (message.type === MOVE){
-        // pending
+      if (message.type === "MOVE"){
+        
+        console.log("inside move")
+          const game = this.games.find(game => game.player1 === socket || game.player2 === socket|| game.player3 === socket|| game.player4 === socket|| game.player5 === socket);
+          if (game) {
+              console.log("inside makemove")
+              game.makeMove(socket, message.payload.move);
+          }
       }
     })
   }

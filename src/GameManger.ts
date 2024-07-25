@@ -1,4 +1,5 @@
 import { WebSocket } from "ws";
+import { Game } from "./Game";
 export class GameManager {
   private games: Game[];
   private pendingUsers: WebSocket[];
@@ -34,7 +35,7 @@ export class GameManager {
           const game = this.games.find(game => game.players[0] === socket || game.players[1] === socket|| game.players[2] === socket|| game.players[3] === socket|| game.players[4] === socket);
           if (game) {
               console.log("inside makemove")
-              game.makeMove(socket, message.payload.move);
+              // game.makeMove(socket, message.payload.move);
           }
       }
     })

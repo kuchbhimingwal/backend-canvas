@@ -31,7 +31,7 @@ export class GameManager {
       if (message.type === "MOVE"){
         
         console.log("inside move")
-          const game = this.games.find(game => game.player1 === socket || game.player2 === socket|| game.player3 === socket|| game.player4 === socket|| game.player5 === socket);
+          const game = this.games.find(game => game.players[0] === socket || game.players[1] === socket|| game.players[2] === socket|| game.players[3] === socket|| game.players[4] === socket);
           if (game) {
               console.log("inside makemove")
               game.makeMove(socket, message.payload.move);

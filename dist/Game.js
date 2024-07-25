@@ -31,39 +31,37 @@ class Game {
         const playerDrawing = Math.floor(Math.random() * 6);
         const randomWord = Math.floor(Math.random() * 50);
         const gameDuration = 30000;
-        const timer = setTimeout(() => {
-            let time = gameDuration;
-            const playersGuessing = this.players.filter((_, index) => index !== playerDrawing);
-            playersGuessing.map((player) => {
+        let time = 30;
+        const playersGuessing = this.players.filter((_, index) => index !== playerDrawing);
+        playersGuessing.map((player) => {
+            player.send(JSON.stringify({
+                type: "GUESSING_PLAYERS",
+                payload: {
+                    message: "you guyes are guyessing"
+                }
+            }));
+        });
+        this.players[playerDrawing].send(JSON.stringify({
+            type: "DRAWING",
+            payload: {
+                word: this.scribbleWords[randomWord]
+            }
+        }));
+        const gameLoop = setInterval(() => {
+            time--;
+            this.players.map((player) => {
                 player.send(JSON.stringify({
-                    type: "GUESSING_PLAYERS",
+                    type: "TIMER",
                     payload: {
-                        message: "you guyes are guyessing"
+                        time
                     }
                 }));
             });
-            this.players[playerDrawing].send(JSON.stringify({
-                type: "DRAWING",
-                payload: {
-                    word: this.scribbleWords[randomWord]
-                }
-            }));
-            const gameLoop = setInterval(() => {
-                time--;
-                this.players.map((player) => {
-                    player.send(JSON.stringify({
-                        type: "TIMER",
-                        payload: {
-                            time
-                        }
-                    }));
-                });
-                // Add game logic here
-            }, 1000);
-            setTimeout(() => {
-                clearInterval(gameLoop);
-                this.startGame();
-            }, gameDuration);
+            // Add game logic here
+        }, 1000);
+        setTimeout(() => {
+            clearInterval(gameLoop);
+            this.startGame();
         }, gameDuration);
     }
 }

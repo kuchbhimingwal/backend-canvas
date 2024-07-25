@@ -35,8 +35,7 @@ export class Game{
     const playerDrawing = Math.floor(Math.random() * 6);
     const randomWord = Math.floor(Math.random() * 50);
     const gameDuration  = 30000;
-    const timer = setTimeout(()=>{
-      let time = gameDuration;
+      let time = 30;
       const playersGuessing = this.players.filter((_, index) => index !== playerDrawing);
       playersGuessing.map((player)=>{
         player.send(JSON.stringify({
@@ -67,6 +66,5 @@ export class Game{
       clearInterval(gameLoop);
       this.startGame();
     }, gameDuration);
-    },gameDuration)
   }
 }

@@ -95,4 +95,23 @@ export class Game{
       }
     })
   }
+  draw(playerSocket:WebSocket, payload:any){
+    if(playerSocket == this.players[this.playerDrawing]){
+      this.playersGuessing.map((player)=>{
+        player.send(JSON.stringify({
+          type: "DRAWING_LINES",
+          payload
+        }))
+      })
+    } else {
+      this.players.map((player)=>{
+        player.send(JSON.stringify({
+          type: "DRAWING_LINES",
+          payload: {
+            message: "not allowed"
+          }
+        }))
+      })
+    }
+  }
 }

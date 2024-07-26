@@ -31,11 +31,17 @@ export class GameManager {
       }
       if (message.type === "GUESS"){
         
-        console.log("inside guess")
+        // console.log("inside guess")
           const game = this.games.find(game => game.players[0] === socket || game.players[1] === socket|| game.players[2] === socket|| game.players[3] === socket|| game.players[4] === socket);
           if (game) {
             game.guess(socket,message.payload.guess)
           }
+      }
+      if(message.type === "DRAW_LINES"){
+        const game = this.games.find(game => game.players[0] === socket || game.players[1] === socket|| game.players[2] === socket|| game.players[3] === socket|| game.players[4] === socket);
+        if (game) {
+          game.draw(socket,message.payload)
+        }
       }
     })
   }

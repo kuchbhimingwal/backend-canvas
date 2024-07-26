@@ -25,35 +25,40 @@ class Game {
                 }
             }));
         });
+        this.playerDrawing = 0;
+        this.randomWord = 0;
+        this.gameDuration = 300000;
+        this.time = 0;
         this.startGame();
+        this.playersGuessing = [];
     }
     startGame() {
-        const playerDrawing = Math.floor(Math.random() * 6);
-        const randomWord = Math.floor(Math.random() * 50);
-        const gameDuration = 30000;
-        let time = 30;
-        const playersGuessing = this.players.filter((_, index) => index !== playerDrawing);
-        playersGuessing.map((player) => {
+        this.playerDrawing = Math.floor(Math.random() * 6);
+        this.randomWord = Math.floor(Math.random() * 50);
+        this.time = 300;
+        this.playersGuessing = this.players.filter((_, index) => index !== this.playerDrawing);
+        this.playersGuessing.map((player, i) => {
+            // console.log(i);
             player.send(JSON.stringify({
                 type: "GUESSING_PLAYERS",
                 payload: {
-                    message: "you guyes are guyessing"
+                    message: "you guyes are guessing"
                 }
             }));
         });
-        this.players[playerDrawing].send(JSON.stringify({
+        this.players[this.playerDrawing].send(JSON.stringify({
             type: "DRAWING",
             payload: {
-                word: this.scribbleWords[randomWord]
+                word: this.scribbleWords[this.randomWord]
             }
         }));
         const gameLoop = setInterval(() => {
-            time--;
+            this.time--;
             this.players.map((player) => {
                 player.send(JSON.stringify({
                     type: "TIMER",
                     payload: {
-                        time
+                        time: this.time
                     }
                 }));
             });
@@ -62,7 +67,25 @@ class Game {
         setTimeout(() => {
             clearInterval(gameLoop);
             this.startGame();
-        }, gameDuration);
+        }, this.gameDuration);
+    }
+    guess(playerSocket, guessWord) {
+        this.players.map((player, i) => {
+            if (playerSocket == player) {
+                if (guessWord == this.scribbleWords[this.randomWord]) {
+                    this.players.map((player) => {
+                        player.send(JSON.stringify({
+                            type: "GUESSED",
+                            payload: {
+                                message: `player ${i} guess the answere right!!`
+                            }
+                        }));
+                    });
+                    this.startGame();
+                    return;
+                }
+            }
+        });
     }
 }
 exports.Game = Game;

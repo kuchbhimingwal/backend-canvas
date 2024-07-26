@@ -29,13 +29,12 @@ export class GameManager {
           this.pendingUsers.push(socket)
         }
       }
-      if (message.type === "MOVE"){
+      if (message.type === "GUESS"){
         
-        console.log("inside move")
+        console.log("inside guess")
           const game = this.games.find(game => game.players[0] === socket || game.players[1] === socket|| game.players[2] === socket|| game.players[3] === socket|| game.players[4] === socket);
           if (game) {
-              console.log("inside makemove")
-              // game.makeMove(socket, message.payload.move);
+            game.guess(socket,message.payload.guess)
           }
       }
     })

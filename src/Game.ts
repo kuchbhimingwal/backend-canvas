@@ -8,6 +8,7 @@ export class Game{
   private randomWord: number;
   private gameDuration: number;
   private time : number;
+  private playersGuessing: WebSocket[];
   constructor(players: WebSocket[]){
     this.scribbleWords = [
       "apple", "banana", "mountain", "river", "ocean",
@@ -31,13 +32,22 @@ export class Game{
         }
       }))
     })
-    
+    this.playerDrawing = 0;
+    this.randomWord = 0;
+    this.gameDuration = 30000;
+    this.time = 0;
+    this.startGame();
+    this.playersGuessing = [];
+  }
+
+  startGame(){
     this.playerDrawing = Math.floor(Math.random() * 6);
     this.randomWord = Math.floor(Math.random() * 50);
-    this.gameDuration  = 30000;
       this.time = 30;
-      const playersGuessing = this.players.filter((_, index) => index !== this.playerDrawing);
-      playersGuessing.map((player)=>{
+      this.playersGuessing = this.players.filter((_, index) => index !== this.playerDrawing);
+      this.playersGuessing.map((player,i)=>{
+        // console.log(i);
+        
         player.send(JSON.stringify({
           type: "GUESSING_PLAYERS",
           payload:{
@@ -50,9 +60,6 @@ export class Game{
           word: this.scribbleWords[this.randomWord]
         }
       }))
-  }
-
-  startGame(playerScoket:WebSocket,guess:string){
       const gameLoop = setInterval(() => {
         this.time--;
         this.players.map((player)=>{
@@ -68,6 +75,24 @@ export class Game{
     setTimeout(() => {
       clearInterval(gameLoop);
       this.startGame();
-    }, gameDuration);
+    }, this.gameDuration);
+  }
+  guess(playerSocket:WebSocket, guessWord: string){
+    this.players.map((player,i)=>{
+      if(playerSocket == player){
+       if(guessWord == this.scribbleWords[this.randomWord]) {
+        this.players.map((player)=>{
+          player.send(JSON.stringify({
+            type: "GUESSED",
+            payload:{
+              message: `player ${i} guess the answere right!!`
+            }
+          }))
+        })
+        this.startGame();
+        return
+       }
+      }
+    })
   }
 }

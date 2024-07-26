@@ -4,7 +4,10 @@ export class Game{
   public players: WebSocket[];
   private scribbleWords: String[];
   private startTime: Date;
-
+  private playerDrawing: number;
+  private randomWord: number;
+  private gameDuration: number;
+  private time : number;
   constructor(players: WebSocket[]){
     this.scribbleWords = [
       "apple", "banana", "mountain", "river", "ocean",
@@ -28,35 +31,35 @@ export class Game{
         }
       }))
     })
-    this.startGame();
-  }
-
-  private startGame(){
-    const playerDrawing = Math.floor(Math.random() * 6);
-    const randomWord = Math.floor(Math.random() * 50);
-    const gameDuration  = 30000;
-      let time = 30;
-      const playersGuessing = this.players.filter((_, index) => index !== playerDrawing);
+    
+    this.playerDrawing = Math.floor(Math.random() * 6);
+    this.randomWord = Math.floor(Math.random() * 50);
+    this.gameDuration  = 30000;
+      this.time = 30;
+      const playersGuessing = this.players.filter((_, index) => index !== this.playerDrawing);
       playersGuessing.map((player)=>{
         player.send(JSON.stringify({
           type: "GUESSING_PLAYERS",
           payload:{
-            message: "you guyes are guyessing"
+            message: "you guyes are guessing"
           }}))
       })
-      this.players[playerDrawing].send(JSON.stringify({
+      this.players[this.playerDrawing].send(JSON.stringify({
         type: "DRAWING",
         payload:{
-          word: this.scribbleWords[randomWord]
+          word: this.scribbleWords[this.randomWord]
         }
       }))
+  }
+
+  startGame(playerScoket:WebSocket,guess:string){
       const gameLoop = setInterval(() => {
-        time--;
+        this.time--;
         this.players.map((player)=>{
           player.send(JSON.stringify({
             type: "TIMER",
             payload:{
-              time
+              time: this.time
             }
           }))
         })

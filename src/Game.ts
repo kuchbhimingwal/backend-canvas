@@ -79,6 +79,15 @@ export class Game{
   }
   guess(playerSocket:WebSocket, guessWord: string){
     this.players.map((player,i)=>{
+      this.players.map((player)=>{
+        player.send(JSON.stringify({
+          type: "GUESS",
+          payload: {
+            guessWord,
+            player: `player ${i}`
+          }
+        }))
+      })
       if(playerSocket == player){
        if(guessWord == this.scribbleWords[this.randomWord]) {
         this.players.map((player)=>{
@@ -91,7 +100,7 @@ export class Game{
         })
         this.startGame();
         return
-       }
+       } 
       }
     })
   }

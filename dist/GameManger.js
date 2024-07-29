@@ -16,7 +16,9 @@ class GameManager {
         socket.on("message", (data) => {
             const message = JSON.parse(data.toString());
             if (message.type == "INIT_GAME") {
-                if (this.pendingUsers.length >= 5) {
+                if (this.pendingUsers[3]) {
+                    this.pendingUsers.push(socket);
+                    // console.log(this.pendingUsers);
                     const game = new Game_1.Game(this.pendingUsers);
                     this.games.push(game);
                     this.pendingUsers = [];
@@ -26,10 +28,16 @@ class GameManager {
                 }
             }
             if (message.type === "GUESS") {
-                console.log("inside guess");
+                // console.log("inside guess")
                 const game = this.games.find(game => game.players[0] === socket || game.players[1] === socket || game.players[2] === socket || game.players[3] === socket || game.players[4] === socket);
                 if (game) {
                     game.guess(socket, message.payload.guess);
+                }
+            }
+            if (message.type === "DRAW_LINES") {
+                const game = this.games.find(game => game.players[0] === socket || game.players[1] === socket || game.players[2] === socket || game.players[3] === socket || game.players[4] === socket);
+                if (game) {
+                    game.draw(socket, message.payload);
                 }
             }
         });

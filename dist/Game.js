@@ -27,7 +27,7 @@ class Game {
         });
         this.playerDrawing = 0;
         this.randomWord = 0;
-        this.gameDuration = 300000;
+        this.gameDuration = 30000;
         this.time = 0;
         this.startGame();
         this.playersGuessing = [];
@@ -35,7 +35,7 @@ class Game {
     startGame() {
         this.playerDrawing = Math.floor(Math.random() * 6);
         this.randomWord = Math.floor(Math.random() * 50);
-        this.time = 300;
+        this.time = 30;
         this.playersGuessing = this.players.filter((_, index) => index !== this.playerDrawing);
         this.playersGuessing.map((player, i) => {
             // console.log(i);
@@ -71,6 +71,15 @@ class Game {
     }
     guess(playerSocket, guessWord) {
         this.players.map((player, i) => {
+            this.players.map((player) => {
+                player.send(JSON.stringify({
+                    type: "GUESS",
+                    payload: {
+                        guessWord,
+                        player: `player ${i}`
+                    }
+                }));
+            });
             if (playerSocket == player) {
                 if (guessWord == this.scribbleWords[this.randomWord]) {
                     this.players.map((player) => {
@@ -86,6 +95,26 @@ class Game {
                 }
             }
         });
+    }
+    draw(playerSocket, payload) {
+        if (playerSocket == this.players[this.playerDrawing]) {
+            this.playersGuessing.map((player) => {
+                player.send(JSON.stringify({
+                    type: "DRAWING_LINES",
+                    payload
+                }));
+            });
+        }
+        else {
+            this.players.map((player) => {
+                player.send(JSON.stringify({
+                    type: "DRAWING_LINES",
+                    payload: {
+                        message: "not allowed"
+                    }
+                }));
+            });
+        }
     }
 }
 exports.Game = Game;

@@ -21,12 +21,15 @@ export class GameManager {
       const message = JSON.parse(data.toString());
 
       if(message.type == "INIT_GAME"){
-        if(this.pendingUsers.length >= 5){
+        if(this.pendingUsers[3]){
+          this.pendingUsers.push(socket);
+          // console.log(this.pendingUsers);
+          
           const game = new Game(this.pendingUsers);
           this.games.push(game);
           this.pendingUsers = [];
         } else {
-          this.pendingUsers.push(socket)
+          this.pendingUsers.push(socket);
         }
       }
       if (message.type === "GUESS"){

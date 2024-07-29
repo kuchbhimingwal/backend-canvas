@@ -15,7 +15,7 @@ wss.on('connection', function connection(ws) {
 
   gameManager.addUsers(ws)
 
-  ws.send('Hello! Message From Server!!');
+  // ws.send('Hello! Message From Server!!');
 });
 
 

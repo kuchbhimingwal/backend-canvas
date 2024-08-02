@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Game = void 0;
 class Game {
     constructor(players) {
+        this.wordGuesses = [{}];
         this.scribbleWords = [
             "apple", "banana", "mountain", "river", "ocean",
             "house", "car", "dog", "cat", "tree",
@@ -33,6 +34,7 @@ class Game {
         this.playersGuessing = [];
     }
     startGame() {
+        this.wordGuesses = [];
         this.playerDrawing = Math.floor(Math.random() * 4);
         this.randomWord = Math.floor(Math.random() * 50);
         this.time = 30;
@@ -70,18 +72,17 @@ class Game {
         }, this.gameDuration);
     }
     guess(playerSocket, guessWord) {
+        this.wordGuesses.push({ guessWord, player: `player ${this.players.indexOf(playerSocket)}` });
         this.players.map((player, i) => {
-            this.players.map((player) => {
-                player.send(JSON.stringify({
-                    type: "GUESS",
-                    payload: {
-                        guessWord,
-                        player: `player ${i}`
-                    }
-                }));
-            });
+            player.send(JSON.stringify({
+                type: "GUESS",
+                payload: {
+                    guessed: this.wordGuesses
+                }
+            }));
             if (playerSocket == player) {
                 if (guessWord == this.scribbleWords[this.randomWord]) {
+                    this.wordGuesses = [];
                     this.players.map((player) => {
                         player.send(JSON.stringify({
                             type: "GUESSED",

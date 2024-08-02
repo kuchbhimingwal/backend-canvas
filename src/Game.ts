@@ -2,6 +2,7 @@ import { WebSocket } from "ws";
 
 export class Game{
   public players: WebSocket[];
+  private wordGuesses: Object[];
   private scribbleWords: String[];
   private startTime: Date;
   private playerDrawing: number;
@@ -10,6 +11,7 @@ export class Game{
   private time : number;
   private playersGuessing: WebSocket[];
   constructor(players: WebSocket[]){
+    this.wordGuesses = [{}];
     this.scribbleWords = [
       "apple", "banana", "mountain", "river", "ocean",
       "house", "car", "dog", "cat", "tree",
@@ -41,6 +43,7 @@ export class Game{
   }
 
   startGame(){
+    this.wordGuesses = [];
     this.playerDrawing = Math.floor(Math.random() * 4);
     this.randomWord = Math.floor(Math.random() * 50);
       this.time = 30;
@@ -78,18 +81,18 @@ export class Game{
     }, this.gameDuration);
   }
   guess(playerSocket:WebSocket, guessWord: string){
+    this.wordGuesses.push({guessWord, player : `player ${this.players.indexOf(playerSocket)}`});
+
     this.players.map((player,i)=>{
-      this.players.map((player)=>{
         player.send(JSON.stringify({
           type: "GUESS",
           payload: {
-            guessWord,
-            player: `player ${i}`
+            guessed: this.wordGuesses
           }
         }))
-      })
       if(playerSocket == player){
        if(guessWord == this.scribbleWords[this.randomWord]) {
+        this.wordGuesses = [];
         this.players.map((player)=>{
           player.send(JSON.stringify({
             type: "GUESSED",

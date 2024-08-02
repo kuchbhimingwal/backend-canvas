@@ -41,7 +41,7 @@ export class Game{
   }
 
   startGame(){
-    this.playerDrawing = Math.floor(Math.random() * 6);
+    this.playerDrawing = Math.floor(Math.random() * 4);
     this.randomWord = Math.floor(Math.random() * 50);
       this.time = 30;
       this.playersGuessing = this.players.filter((_, index) => index !== this.playerDrawing);

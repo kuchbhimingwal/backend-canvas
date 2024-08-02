@@ -21,14 +21,14 @@ export class GameManager {
       const message = JSON.parse(data.toString());
 
       if(message.type == "INIT_GAME"){
-        if(this.pendingUsers[3]){
+        if(this.pendingUsers.length === 4){
           this.pendingUsers.push(socket);
-          // console.log(this.pendingUsers);
-          
           const game = new Game(this.pendingUsers);
           this.games.push(game);
+          
           this.pendingUsers = [];
         } else {
+          console.log("games runnig", this.games.length);
           this.pendingUsers.push(socket);
         }
       }

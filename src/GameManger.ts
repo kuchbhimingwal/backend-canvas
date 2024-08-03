@@ -28,7 +28,7 @@ export class GameManager {
           
           this.pendingUsers = [];
         } else {
-          console.log("games runnig", this.games.length);
+          // console.log("games runnig", this.games.length);
           this.pendingUsers.push(socket);
         }
       }

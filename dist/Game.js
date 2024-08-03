@@ -99,6 +99,8 @@ class Game {
     }
     draw(playerSocket, payload) {
         if (playerSocket == this.players[this.playerDrawing]) {
+            console.log("currrent reccecivede");
+            console.log(payload);
             this.playersGuessing.map((player) => {
                 player.send(JSON.stringify({
                     type: "DRAWING_LINES",
@@ -108,6 +110,7 @@ class Game {
         }
         else {
             this.players.map((player) => {
+                console.log("invalid");
                 player.send(JSON.stringify({
                     type: "DRAWING_LINES",
                     payload: {

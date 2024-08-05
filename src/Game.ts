@@ -9,9 +9,13 @@ export class Game{
   public randomWord: number;
   public gameDuration: number;
   public time : number;
+  public timeoutDuration : number;
   public playersGuessing: WebSocket[];
+  public gameLoop: NodeJS.Timeout | undefined;
+  public names: String[];
   constructor(players: WebSocket[]){
     this.wordGuesses = [{}];
+    this.names = ["John", "Emily", "Michael", "Sophia", "James"];
     this.scribbleWords = [
       "apple", "banana", "mountain", "river", "ocean",
       "house", "car", "dog", "cat", "tree",
@@ -30,23 +34,28 @@ export class Game{
     player.send(JSON.stringify({
         type: "INIT_GAME",
         payload:{
-          player: `player ${i}`
+          player: `player ${this.names[i]}`
         }
       }))
     })
     this.playerDrawing = 0;
     this.randomWord = 0;
-    this.gameDuration = 30000;
+    this.gameDuration = 0;
     this.time = 0;
+    this.timeoutDuration = 0;
     this.playersGuessing = [];
+    this.gameLoop = undefined;
     this.startGame();
   }
 
   startGame(){
+    clearInterval(this.gameLoop);
+    this.time = 30;
+    this.gameDuration = 30000;
+    this.timeoutDuration = 1000;
     this.wordGuesses = [];
     this.playerDrawing = Math.floor(Math.random() * 4);
     this.randomWord = Math.floor(Math.random() * 50);
-      this.time = 30;
       this.playersGuessing = this.players.filter((_, index) => index !== this.playerDrawing);
       this.playersGuessing.map((player,i)=>{
         // console.log(i);
@@ -63,7 +72,7 @@ export class Game{
           word: this.scribbleWords[this.randomWord]
         }
       }))
-      const gameLoop = setInterval(() => {
+      this.gameLoop = setInterval(() => {
         this.time--;
         this.players.map((player)=>{
           player.send(JSON.stringify({
@@ -74,14 +83,14 @@ export class Game{
           }))
         })
         // Add game logic here
-    }, 1000);
+    }, this.timeoutDuration);
     setTimeout(() => {
-      clearInterval(gameLoop);
+      clearInterval(this.gameLoop);
       this.startGame();
     }, this.gameDuration);
   }
   guess(playerSocket:WebSocket, guessWord: string){
-    this.wordGuesses.push({guessWord, player : `player ${this.players.indexOf(playerSocket)}`});
+    this.wordGuesses.push({guessWord, player : `player ${this.names[this.players.indexOf(playerSocket)]}`});
 
     this.players.map((player,i)=>{
         player.send(JSON.stringify({
@@ -97,10 +106,11 @@ export class Game{
           player.send(JSON.stringify({
             type: "GUESSED",
             payload:{
-              message: `player ${i} guess the answere right!!`
+              message: `player ${this.names[i]} guess the answere right!!`
             }
           }))
         })
+        // clearInterval(this.gameLoop);
         this.startGame();
         return
        } 

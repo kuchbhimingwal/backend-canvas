@@ -30,8 +30,8 @@ class Game {
         this.randomWord = 0;
         this.gameDuration = 30000;
         this.time = 0;
-        this.startGame();
         this.playersGuessing = [];
+        this.startGame();
     }
     startGame() {
         this.wordGuesses = [];
@@ -99,8 +99,9 @@ class Game {
     }
     draw(playerSocket, payload) {
         if (playerSocket == this.players[this.playerDrawing]) {
-            console.log("currrent reccecivede");
-            console.log(payload);
+            // console.log("currrent reccecivede");
+            // console.log(payload);
+            // console.log("gusseing", this.playersGuessing.length);
             this.playersGuessing.map((player) => {
                 player.send(JSON.stringify({
                     type: "DRAWING_LINES",

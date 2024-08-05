@@ -2,14 +2,14 @@ import { WebSocket } from "ws";
 
 export class Game{
   public players: WebSocket[];
-  private wordGuesses: Object[];
-  private scribbleWords: String[];
-  private startTime: Date;
-  private playerDrawing: number;
-  private randomWord: number;
-  private gameDuration: number;
-  private time : number;
-  private playersGuessing: WebSocket[];
+  public wordGuesses: Object[];
+  public scribbleWords: String[];
+  public startTime: Date;
+  public playerDrawing: number;
+  public randomWord: number;
+  public gameDuration: number;
+  public time : number;
+  public playersGuessing: WebSocket[];
   constructor(players: WebSocket[]){
     this.wordGuesses = [{}];
     this.scribbleWords = [
@@ -38,8 +38,8 @@ export class Game{
     this.randomWord = 0;
     this.gameDuration = 30000;
     this.time = 0;
-    this.startGame();
     this.playersGuessing = [];
+    this.startGame();
   }
 
   startGame(){
@@ -109,8 +109,9 @@ export class Game{
   }
   draw(playerSocket:WebSocket, payload:any){
     if(playerSocket == this.players[this.playerDrawing]){
-      console.log("currrent reccecivede");
-      console.log(payload);
+      // console.log("currrent reccecivede");
+      // console.log(payload);
+      // console.log("gusseing", this.playersGuessing.length);
       
       
       this.playersGuessing.map((player)=>{
